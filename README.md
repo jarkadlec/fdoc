@@ -36,7 +36,7 @@ end
 
 In case you use versioning, you can use it simply inside fdoc as well. Just add following configuration (the best is to put it inside spec\_helper file again). Documentation will then be generated for all versions and the schema will be verified against the correct version.
 
-The versioning works for one-lever versioning at the moment, structure should be controllers/version/*.rb and specs in controllers/version/*.rb. In case your specs are not in controllers directory you still can use the fdoc versioning, just set the base_folder correctly.
+The versioning works for one-lever versioning at the moment, structure should be controllers/version/\*.rb and specs in controllers/version/\*.rb. In case your specs are not in controllers directory you still can use the fdoc versioning, just set the base_folder correctly.
 
 ```ruby
 # Enable versions support, by default it is set to false
