@@ -2,6 +2,7 @@ $:.unshift(File.dirname(__FILE__))
 
 module Fdoc
   DEFAULT_SERVICE_PATH = "docs/fdoc"
+  DEFAULT_BASE_FOLDER  = 'controllers'
 
   def self.scaffold_mode?
     ENV['FDOC_SCAFFOLD']
@@ -13,6 +14,22 @@ module Fdoc
 
   def self.service_path
     @service_path || DEFAULT_SERVICE_PATH
+  end
+
+  def self.versions_support=(versions_support)
+    @versions_support = versions_support
+  end
+
+  def self.versions_support
+    @versions_support || false
+  end
+
+  def self.base_folder=(base_folder)
+    @base_folder = base_folder.sub('/', '')
+  end
+
+  def self.base_folder
+    @base_folder || DEFAULT_BASE_FOLDER
   end
 
   def self.decide_success_with(&block)

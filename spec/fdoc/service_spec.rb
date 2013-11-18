@@ -6,6 +6,32 @@ describe Fdoc::Service do
   let(:verb) { 'GET' }
   let(:path) { 'members/list' }
 
+  describe '#new' do
+    let(:service_dir) { 'path/to/docs/' }
+
+    subject { Fdoc::Service.new(service_dir) }
+
+    its(:service_dir) { should == File.expand_path(service_dir) }
+
+    context 'with verioning enabled' do
+      before do
+        Fdoc.should_receive(:versions_support).and_return(true)
+        Fdoc::Service.any_instance.should_receive(:caller).and_return([ 'place1', 'place2', 'place3', 'place4', 'controllers/version1/test_controller_spec.rb'])
+      end
+
+      it "should set service_path correctly with versioning" do
+        Fdoc.should_receive(:base_folder).and_return('controllers')
+        subject.service_dir.should == File.expand_path("#{service_dir}/version1")
+      end
+
+      it "should set service_path defaultly if cab't find the version folder" do
+        Fdoc.should_receive(:base_folder).and_return('controllers_bad')
+        subject.service_dir.should == File.expand_path("#{service_dir}")
+      end
+    end
+  end
+
+
   describe "#open" do
     let(:scaffold_mode) { false }
     context "in regular mode" do

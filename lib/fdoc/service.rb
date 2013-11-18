@@ -10,6 +10,13 @@ class Fdoc::Service
   end
 
   def initialize(service_dir, scaffold_mode = Fdoc.scaffold_mode?)
+    if Fdoc.versions_support
+       # the spec file that calls the service is 5th in backtrace (=> index 4)
+      base_file = caller[4]
+      filename_parts = base_file.split(/#{Fdoc.base_folder}\/(\w+)\/[\w_-]+\.rb/)
+      service_dir += "/#{filename_parts[1]}/" if filename_parts.size >= 2 # change the service dir only if possible
+    end
+
     @service_dir = File.expand_path(service_dir)
     service_path = Dir["#{@service_dir}/*.fdoc.service"].first
     @schema = if service_path
