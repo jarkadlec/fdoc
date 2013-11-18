@@ -45,8 +45,6 @@ Fdoc.versions_support = true
 # Configure the folder where are your versioned specs, it is set to controllers folder by default.
 Fdoc.base_folder = 'other_controllers_folder'
 
-
-
 ```
 
 fdoc is built to work around controller specs in rspec, and provides `Fdoc::SpecWatcher` as a mixin. Make sure to include it *inside* your top level describe.
