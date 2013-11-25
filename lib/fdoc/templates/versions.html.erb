@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      API Documentation - versions list
+    </title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="<%= css_path %>" />
+  </head>
+  <body>
+    <div id="page">
+      <div id="content">
+        <h1>
+          API Documentation - versions list
+        </h1>
+
+        <%= tag_with_anchor('h2', 'Versions') %>
+
+        <ul>
+          <% versions.each do |version| %>
+            <li>
+              <h3>
+                <a href="<%= version %>"><%= version %></a>
+              </h3>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
+

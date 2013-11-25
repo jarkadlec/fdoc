@@ -24,12 +24,15 @@ module Fdoc
     method_option :url_base_path, :aliases => "-u", :desc => "URL base path"
     method_option :format, :aliases => "-f", :desc => "Format in html or markdown, defaults to html", :default => "html"
     method_option :templates, :aliases => "-t", :desc => "Template overrides path"
+    method_option :versions, :aliases => "-v", :desc => "Use versioning?"
+
     def convert(fdoc_path)
+      @fdoc_path = fdoc_path
       say_status nil, "Converting fdoc to #{options[:format]}"
 
-      self.origin_path = File.expand_path(fdoc_path)
+      self.origin_path = File.expand_path(@fdoc_path)
       raise Fdoc::NotFound.new(origin_path) unless has_valid_origin?
-      say_status :using, fdoc_path
+      say_status :using, @fdoc_path
 
       self.destination_root = output_path
       raise Fdoc::NotADirectory.new(output_path) unless has_valid_destination?
@@ -44,6 +47,14 @@ module Fdoc
 
     no_tasks do
       def convert_to_html
+        if options[:versions]
+          versions_to_html
+        else
+          single_version_to_html
+        end
+      end
+
+      def single_version_to_html
         in_root do
           copy_file("styles.css")
           create_file("index.html", meta_presenter.to_html) if has_meta_service?
@@ -59,6 +70,19 @@ module Fdoc
               end
             end
           end
+        end
+      end
+
+      def versions_to_html
+        in_root do
+          copy_file("styles.css")
+          create_file("index.html", versions_presenter.to_html)
+        end
+
+        versions.each do |version|
+          self.origin_path = File.expand_path("#{@fdoc_path}/#{version}")
+          self.destination_root = "#{output_path}/#{version}"
+          single_version_to_html
         end
       end
 
@@ -150,6 +174,20 @@ module Fdoc
         meta_service,
         html_options
       )
+    end
+
+    def versions_presenter
+      options = html_options.merge({ versions: versions })
+      options.delete(:html_directory)
+      @versions_presenter ||= Fdoc::VersionsPresenter.new(
+        options
+      )
+    end
+
+    def versions
+      @versions ||= Dir.entries(origin_path).select do
+        |entry| File.directory? File.join(origin_path,entry) and !(entry =='.' || entry == '..')
+      end
     end
 
     def meta_service
